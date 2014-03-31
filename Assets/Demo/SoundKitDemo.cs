@@ -12,7 +12,7 @@ public class SoundKitDemo : MonoBehaviour
 
 	private float _volume = 0.9f;
 	private float _bgMusicVolume = 0.9f;
-	private SKSound _loopedFartSound;
+	private SoundKit.SKSound _loopedFartSound;
 
 
 	public void OnGUI()
@@ -31,7 +31,7 @@ public class SoundKitDemo : MonoBehaviour
 		if( _loopedFartSound == null )
 		{
 			if( GUILayout.Button( "Play Fart Looped" ) )
-				_loopedFartSound = SoundKit.instance.playSoundLooped( fart );
+				_loopedFartSound = SoundKit.instance.playSound( fart ).setLoop( true );
 		}
 		else
 		{
@@ -72,14 +72,14 @@ public class SoundKitDemo : MonoBehaviour
 
 
 		GUILayout.Space( 20 );
-		if( SoundKit.instance.bgSound != null )
+		if( SoundKit.instance.backgroundSound != null )
 		{
 			GUILayout.Label( "BG Music Volume" );
 
 			oldVolume = _bgMusicVolume;
 			_bgMusicVolume = GUILayout.HorizontalSlider( _bgMusicVolume, 0, 1 );
 			if( oldVolume != _bgMusicVolume )
-				SoundKit.instance.bgSound.audioSource.volume = _bgMusicVolume;
+				SoundKit.instance.backgroundSound.audioSource.volume = _bgMusicVolume;
 		}
 	}
 
