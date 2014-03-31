@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: c35d3b15f8dbf477f8fd90e9675fca61
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - explosion: {fileID: 8300000, guid: 0c22282562ef54b92a7592cba597cbfa, type: 3}
+  - fart: {fileID: 8300000, guid: 9d93eb8a15e1740d2ac6dded36112abc, type: 3}
+  - rocket: {fileID: 8300000, guid: 787eed434609f49a493c4cb99d9a1826, type: 3}
+  - squish: {fileID: 8300000, guid: 6dadeca09e502478eb54f9befbb35d78, type: 3}
+  - windBGSound: {fileID: 8300000, guid: 8c4b65f3ebaef4019a62a49911c8266a, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
