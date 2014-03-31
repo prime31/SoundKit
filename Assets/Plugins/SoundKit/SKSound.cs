@@ -9,17 +9,14 @@ public class SKSound
 
 	public AudioSource audioSource;
 	public GameObject gameObject;
-	public bool available = true;
 	public bool destroyAfterPlay = false;
 	public Action completionHandler;
 
 
 	public bool loop
 	{
-		set
-		{
-			audioSource.loop = value;
-		}
+		set { audioSource.loop = value; }
+		get { return audioSource.loop; }
 	}
 
 
@@ -39,7 +36,9 @@ public class SKSound
 	private void destroySelf()
 	{
 		if( _manager.removeSound( this ) )
-			MonoBehaviour.Destroy( gameObject );
+			GameObject.Destroy( gameObject );
+		else
+			_manager.recycleSound( this );
 	}
 
 
@@ -49,6 +48,8 @@ public class SKSound
 
 		if( destroyAfterPlay )
 			destroySelf();
+		else
+			_manager.recycleSound( this );
 	}
 
 
@@ -77,14 +78,7 @@ public class SKSound
 		// Setup the GameObject and AudioSource and start playing
 		gameObject.name = audioClip.name;
 		audioSource.clip = audioClip;
-
-		return play( rolloff, volume, position );
-	}
-
-
-	public IEnumerator play( AudioRolloffMode rolloff, float volume, Vector3 position )
-	{
-		available = false;
+		audioSource.loop = false;
 
 		// Setup the GameObject and AudioSource and start playing
 		gameObject.transform.position = position;
@@ -104,8 +98,25 @@ public class SKSound
 
 		// Should we destroy ourself after playing?
 		if( destroyAfterPlay )
-			this.destroySelf();
-
-		available = true;
+			destroySelf();
+		else
+			_manager.recycleSound( this );
 	}
+
+
+	public void playAudioClipLooped( AudioClip audioClip, AudioRolloffMode rolloff, float volume, Vector3 position )
+	{
+		// Setup the GameObject and AudioSource and start playing
+		gameObject.name = audioClip.name;
+		audioSource.clip = audioClip;
+		audioSource.loop = true;
+
+		// Setup the GameObject and AudioSource and start playing
+		gameObject.transform.position = position;
+
+		audioSource.rolloffMode = rolloff;
+		audioSource.volume = volume;
+		audioSource.audio.Play();
+	}
+
 }

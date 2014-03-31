@@ -12,6 +12,7 @@ public class SoundKitDemo : MonoBehaviour
 
 	private float _volume = 0.9f;
 	private float _bgMusicVolume = 0.9f;
+	private SKSound _loopedFartSound;
 
 
 	public void OnGUI()
@@ -19,14 +20,30 @@ public class SoundKitDemo : MonoBehaviour
 		if( GUILayout.Button( "Play Explosion" ) )
 			SoundKit.instance.playSound( explosion );
 
+		GUILayout.Space( 20 );
+
 		if( GUILayout.Button( "Play Fart" ) )
 			SoundKit.instance.playSound( fart );
+
+		if( GUILayout.Button( "Play Fart Looped" ) )
+			_loopedFartSound = SoundKit.instance.playSoundLooped( fart );
+
+		if( _loopedFartSound != null )
+		{
+			if( GUILayout.Button( "Stop Looping Fart Sound" ) )
+			{
+				_loopedFartSound.stop();
+				_loopedFartSound = null;
+			}
+		}
 
 		if( GUILayout.Button( "Play Fart with Completion Handler" ) )
 		{
 			SoundKit.instance.playSound( fart )
 				.setCompletionHandler( () => Debug.Log( "done playing fart" ) );
 		}
+
+		GUILayout.Space( 20 );
 
 		if( GUILayout.Button( "Play Rocket" ) )
 			SoundKit.instance.playSound( rocket );
@@ -49,12 +66,16 @@ public class SoundKitDemo : MonoBehaviour
 			SoundKit.instance.soundEffectVolume = _volume;
 
 
-		GUILayout.Label( "BG Music Volume" );
+		GUILayout.Space( 20 );
+		if( SoundKit.instance.bgSound != null )
+		{
+			GUILayout.Label( "BG Music Volume" );
 
-		oldVolume = _bgMusicVolume;
-		_bgMusicVolume = GUILayout.HorizontalSlider( _bgMusicVolume, 0, 1 );
-		if( oldVolume != _bgMusicVolume )
-			SoundKit.instance.bgSound.audioSource.volume = _bgMusicVolume;
+			oldVolume = _bgMusicVolume;
+			_bgMusicVolume = GUILayout.HorizontalSlider( _bgMusicVolume, 0, 1 );
+			if( oldVolume != _bgMusicVolume )
+				SoundKit.instance.bgSound.audioSource.volume = _bgMusicVolume;
+		}
 	}
 
 }
