@@ -20,13 +20,13 @@ public class SKSound
 	}
 
 
-	public SKSound( SoundKit manager, string name )
+	public SKSound( SoundKit manager )
 	{
 		_manager = manager;
 
 		// Create a GameObject to hold the audioSource for playing sounds
 		gameObject = new GameObject();
-		gameObject.name = name;
+		gameObject.name = "SKSound";
 		gameObject.transform.parent = manager.transform;
 
 		audioSource = gameObject.AddComponent<AudioSource>();
@@ -76,7 +76,6 @@ public class SKSound
 	public IEnumerator playAudioClip( AudioClip audioClip, AudioRolloffMode rolloff, float volume, Vector3 position )
 	{
 		// Setup the GameObject and AudioSource and start playing
-		gameObject.name = audioClip.name;
 		audioSource.clip = audioClip;
 		audioSource.loop = false;
 
@@ -107,7 +106,6 @@ public class SKSound
 	public void playAudioClipLooped( AudioClip audioClip, AudioRolloffMode rolloff, float volume, Vector3 position )
 	{
 		// Setup the GameObject and AudioSource and start playing
-		gameObject.name = audioClip.name;
 		audioSource.clip = audioClip;
 		audioSource.loop = true;
 

@@ -11,7 +11,6 @@ public class SoundKit : MonoBehaviour
 	public bool dontDestroyOnLoad = true;
 	public bool clearAllAudioClipsOnLevelLoad = true;
 
-	private const string _emptyGameObjectName = "No Sound";
 	private Stack<SKSound> _availableSounds;
 	private List<SKSound> _playingSounds;
 	[HideInInspector]
@@ -53,7 +52,7 @@ public class SoundKit : MonoBehaviour
 		_playingSounds = new List<SKSound>();
 
 		for( int i = 0; i < initialCapacity; i++ )
-			_availableSounds.Push( new SKSound( this, _emptyGameObjectName ) );
+			_availableSounds.Push( new SKSound( this ) );
 	}
 
 
@@ -71,7 +70,6 @@ public class SoundKit : MonoBehaviour
 			{
 				var s = _playingSounds[i];
 				s.audioSource.clip = null;
-				s.gameObject.name = _emptyGameObjectName;
 
 				_availableSounds.Push( s );
 				_playingSounds.RemoveAt( i );
@@ -92,7 +90,7 @@ public class SoundKit : MonoBehaviour
 		// if we didnt find an available found, bail out
 		if( sound == null )
 		{
-			sound = new SKSound( this, _emptyGameObjectName );
+			sound = new SKSound( this );
 			sound.destroyAfterPlay = true;
 		}
 
@@ -105,7 +103,7 @@ public class SoundKit : MonoBehaviour
 	public void playBGMusic( AudioClip audioClip, bool loop = true )
 	{
 		if( bgSound == null )
-			bgSound = new SKSound( this, _emptyGameObjectName );
+			bgSound = new SKSound( this );
 
 		if( loop )
 			bgSound.playAudioClipLooped( audioClip, AudioRolloffMode.Linear, _soundEffectVolume, Vector3.zero );
