@@ -158,7 +158,14 @@ public class SoundKit : MonoBehaviour
 		sound.setCompletionHandler( null );
 		sound.destroyAfterPlay = false;
 
-		_playingSounds.Remove( sound );
+		var index = 0;
+		while( index < _playingSounds.Count )
+		{
+			if( _playingSounds[index] == sound )
+				break;
+			index++;
+		}
+		_playingSounds.RemoveAt( index );
 		_availableSounds.Push( sound );
 	}
 
