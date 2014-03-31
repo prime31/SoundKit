@@ -10,11 +10,10 @@ public class SoundKit : MonoBehaviour
 	public int maxCapacity = 15;
 	public bool dontDestroyOnLoad = true;
 	public bool clearAllAudioClipsOnLevelLoad = true;
+	public SKSound bgSound;
 
 	private Stack<SKSound> _availableSounds;
 	private List<SKSound> _playingSounds;
-	[HideInInspector]
-	public SKSound bgSound;
 
 
 	private float _soundEffectVolume = 0.9f;
@@ -89,10 +88,7 @@ public class SoundKit : MonoBehaviour
 
 		// if we didnt find an available found, bail out
 		if( sound == null )
-		{
 			sound = new SKSound( this );
-			sound.destroyAfterPlay = true;
-		}
 
 		_playingSounds.Add( sound );
 
@@ -100,62 +96,72 @@ public class SoundKit : MonoBehaviour
 	}
 
 
-	public void playBGMusic( AudioClip audioClip, bool loop = true )
+	public void playBackgroundMusic( AudioClip audioClip, bool loop = true )
 	{
 		if( bgSound == null )
 			bgSound = new SKSound( this );
 
 		if( loop )
-			bgSound.playAudioClipLooped( audioClip, AudioRolloffMode.Linear, _soundEffectVolume, Vector3.zero );
+			bgSound.playAudioClip( audioClip, _soundEffectVolume, true );
 		else
-			StartCoroutine( bgSound.playAudioClip( audioClip, AudioRolloffMode.Linear, _soundEffectVolume, Vector3.zero ) );
+			StartCoroutine( bgSound.playAudioClip( audioClip, _soundEffectVolume ) );
 	}
 
 
-	public SKSound playSound( AudioClip audioClip, AudioRolloffMode rolloff = AudioRolloffMode.Linear, Vector3 position = default( Vector3 ) )
+	/// <summary>
+	/// fetches any AudioSource it can find and uses the standard PlayOneShot to play. Use this if you don't require any
+	/// extra control over a clip and don't care about when it completes. It avoids the call to StartCoroutine.
+	/// </summary>
+	/// <param name="audioClip">Audio clip.</param>
+	/// <param name="volumeScale">Volume scale.</param>
+	public void playOneShot( AudioClip audioClip, float volumeScale = 1f )
+	{
+		// find an audio source. any will work
+		AudioSource source = null;
+
+		if( _availableSounds.Count > 0 )
+			source = _availableSounds.Peek().audioSource;
+		else
+			source = _playingSounds[0].audioSource;
+
+		source.PlayOneShot( audioClip, volumeScale );
+	}
+
+
+	public SKSound playSound( AudioClip audioClip )
 	{
 		// Find the first SKSound not being used. if they are all in use, create a new one
 		SKSound _sound = nextAvailableSound();
 
-		StartCoroutine( _sound.playAudioClip( audioClip, rolloff, _soundEffectVolume, position ) );
-
-		return _sound;
-	}
-
-
-	public SKSound playSoundLooped( AudioClip audioClip, AudioRolloffMode rolloff = AudioRolloffMode.Linear, Vector3 position = default( Vector3 ) )
-	{
-		// Find the first SKSound not being used. if they are all in use, create a new one
-		SKSound _sound = nextAvailableSound();
-
-		_sound.playAudioClipLooped( audioClip, rolloff, _soundEffectVolume, position );
+		StartCoroutine( _sound.playAudioClip( audioClip, _soundEffectVolume ) );
 
 		return _sound;
 	}
 
 
 	/// <summary>
-	/// returns true if we are already over capacity and the SKSound should destroy it's GameObject
+	/// loops the AudioClip. Do note that you are responsible for calling either stop or fadeOutAndStop on the SKSound
+	/// or it will not be recycled
 	/// </summary>
-	/// <returns><c>true</c>, if sound was removed, <c>false</c> otherwise.</returns>
-	/// <param name="s">S.</param>
-	public bool removeSound( SKSound sound )
+	/// <returns>The sound looped.</returns>
+	/// <param name="audioClip">Audio clip.</param>
+	public SKSound playSoundLooped( AudioClip audioClip )
 	{
-		if( _availableSounds.Count + _playingSounds.Count > maxCapacity )
-		{
-			_playingSounds.Remove( sound );
-			return true;
-		}
+		// find the first SKSound not being used. if they are all in use, create a new one
+		SKSound _sound = nextAvailableSound();
 
-		return false;
+		_sound.playAudioClip( audioClip, _soundEffectVolume, true );
+
+		return _sound;
 	}
 
 
+	/// <summary>
+	/// used internally to recycle SKSounds and their AudioSources
+	/// </summary>
+	/// <param name="sound">Sound.</param>
 	public void recycleSound( SKSound sound )
 	{
-		sound.setCompletionHandler( null );
-		sound.destroyAfterPlay = false;
-
 		var index = 0;
 		while( index < _playingSounds.Count )
 		{
@@ -164,7 +170,13 @@ public class SoundKit : MonoBehaviour
 			index++;
 		}
 		_playingSounds.RemoveAt( index );
-		_availableSounds.Push( sound );
+
+
+		// if we are already over capacity dont recycle this sound but destroy it instead
+		if( _availableSounds.Count + _playingSounds.Count >= maxCapacity )
+			Destroy( sound.audioSource );
+		else
+			_availableSounds.Push( sound );
 	}
 
 }

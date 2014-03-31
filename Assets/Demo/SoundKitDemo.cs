@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 
@@ -20,15 +20,20 @@ public class SoundKitDemo : MonoBehaviour
 		if( GUILayout.Button( "Play Explosion" ) )
 			SoundKit.instance.playSound( explosion );
 
+		if( GUILayout.Button( "Play Explosion via One Shot" ) )
+			SoundKit.instance.playOneShot( explosion );
+
 		GUILayout.Space( 20 );
 
 		if( GUILayout.Button( "Play Fart" ) )
 			SoundKit.instance.playSound( fart );
 
-		if( GUILayout.Button( "Play Fart Looped" ) )
-			_loopedFartSound = SoundKit.instance.playSoundLooped( fart );
-
-		if( _loopedFartSound != null )
+		if( _loopedFartSound == null )
+		{
+			if( GUILayout.Button( "Play Fart Looped" ) )
+				_loopedFartSound = SoundKit.instance.playSoundLooped( fart );
+		}
+		else
 		{
 			if( GUILayout.Button( "Stop Looping Fart Sound" ) )
 			{
@@ -52,7 +57,7 @@ public class SoundKitDemo : MonoBehaviour
 			SoundKit.instance.playSound( squish );
 
 		if( GUILayout.Button( "Play Wind Background Audio" ) )
-			SoundKit.instance.playBGMusic( windBGSound, true );
+			SoundKit.instance.playBackgroundMusic( windBGSound, true );
 
 		if( GUILayout.Button( "Toggle AudioListener.pause" ) )
 			AudioListener.pause = !AudioListener.pause;
