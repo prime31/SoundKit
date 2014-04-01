@@ -183,7 +183,7 @@ public class SoundKit : MonoBehaviour
 	{
 		// Find the first SKSound not being used. if they are all in use, create a new one
 		SKSound sound = nextAvailableSound();
-		sound.playAudioClip( audioClip, _soundEffectVolume, pitch );
+		sound.playAudioClip( audioClip, volume, pitch );
 
 		return sound;
 	}
