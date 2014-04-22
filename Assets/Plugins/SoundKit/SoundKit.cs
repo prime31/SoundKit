@@ -171,6 +171,18 @@ public class SoundKit : MonoBehaviour
 	{
 		return playSound( audioClip, volume, 1f );
 	}
+	
+	
+	/// <summary>
+	/// plays the AudioClip with the specified pitch
+	/// </summary>
+	/// <returns>The sound.</returns>
+	/// <param name="audioClip">Audio clip.</param>
+	/// <param name="pitch">Pitch.</param>
+	public SKSound playPitchedSound( AudioClip audioClip, float pitch )
+	{
+		return playSound( audioClip, _soundEffectVolume, pitch );
+	}
 
 
 	/// <summary>
