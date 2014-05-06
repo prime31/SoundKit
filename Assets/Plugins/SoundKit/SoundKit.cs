@@ -38,6 +38,9 @@ public class SoundKit : MonoBehaviour
 		// avoid duplicates
 		if( instance != null )
 		{
+			// we set dontDestroyOnLoad to false here due to the Destroy being delayed. it will avoid issues
+			// with OnLevelWasLoaded being called while the object is being destroyed.
+			dontDestroyOnLoad = false;
 			Destroy( gameObject );
 			return;
 		}
