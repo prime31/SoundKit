@@ -18,3 +18,8 @@ Some notes about more advanced usage:
 - to play a background music track call *SoundKit.instance.playBackgroundMusic* (only one background music track can be played at a time and it is recommended to use the Stream from disc option for these)
 - you can adjust individual volume for any playing sound or background music by just accessing the *SKSound.audioSource* directly
 - to loop any AudioClip call the *setLoop* method on the SKSound class. Note that if you turn looping on you are responsible for calling *stop* to recycle the SKSound!
+
+
+License
+-----
+[Attribution-NonCommercial-ShareAlike 3.0 Unported](http://creativecommons.org/licenses/by-nc-sa/3.0/legalcode) with [simple explanation](http://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_US) with the attribution clause waived. You are free to use SoundKit in any and all games that you make. You cannot sell SoundKit directly or as part of a larger game asset.
