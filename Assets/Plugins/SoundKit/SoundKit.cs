@@ -7,28 +7,17 @@ using System.Collections.Generic;
 public class SoundKit : MonoBehaviour
 {
 	public static SoundKit instance = null;
+	[Tooltip( "Anytime you play a sound and set the scaledVolume it is multiplied by this value" )]
+	public float soundEffectVolume = 1f;
 	public int initialCapacity = 10;
 	public int maxCapacity = 15;
 	public bool dontDestroyOnLoad = true;
 	public bool clearAllAudioClipsOnLevelLoad = true;
+	[NonSerialized]
 	public SKSound backgroundSound;
 
 	private Stack<SKSound> _availableSounds;
 	private List<SKSound> _playingSounds;
-
-
-	private float _soundEffectVolume = 0.9f;
-	public float soundEffectVolume
-	{
-		get { return _soundEffectVolume; }
-		set
-		{
-			_soundEffectVolume = value;
-
-			foreach( var s in _playingSounds )
-				s.audioSource.volume = value;
-		}
-	}
 
 
 	#region MonoBehaviour
@@ -123,12 +112,12 @@ public class SoundKit : MonoBehaviour
 	/// </summary>
 	/// <param name="audioClip">Audio clip.</param>
 	/// <param name="loop">If set to <c>true</c> loop.</param>
-	public void playBackgroundMusic( AudioClip audioClip, bool loop = true )
+	public void playBackgroundMusic( AudioClip audioClip, float volume, bool loop = true )
 	{
 		if( backgroundSound == null )
 			backgroundSound = new SKSound( this );
 
-		backgroundSound.playAudioClip( audioClip, _soundEffectVolume, 1f );
+		backgroundSound.playAudioClip( audioClip, volume, 1f );
 		backgroundSound.setLoop( loop );
 	}
 
@@ -149,7 +138,7 @@ public class SoundKit : MonoBehaviour
 		else
 			source = _playingSounds[0].audioSource;
 
-		source.PlayOneShot( audioClip, volumeScale );
+		source.PlayOneShot( audioClip, volumeScale * soundEffectVolume );
 	}
 
 
@@ -160,7 +149,7 @@ public class SoundKit : MonoBehaviour
 	/// <param name="audioClip">Audio clip.</param>
 	public SKSound playSound( AudioClip audioClip )
 	{
-		return playSound( audioClip, _soundEffectVolume );
+		return playSound( audioClip, 1f );
 	}
 
 
@@ -184,21 +173,21 @@ public class SoundKit : MonoBehaviour
 	/// <param name="pitch">Pitch.</param>
 	public SKSound playPitchedSound( AudioClip audioClip, float pitch )
 	{
-		return playSound( audioClip, _soundEffectVolume, pitch );
+		return playSound( audioClip, 1f, pitch );
 	}
 
 
 	/// <summary>
-	/// plays the AudioClip with the specified volume and pitch
+	/// plays the AudioClip with the specified volumeScale and pitch
 	/// </summary>
 	/// <returns>The sound.</returns>
 	/// <param name="audioClip">Audio clip.</param>
 	/// <param name="volume">Volume.</param>
-	public SKSound playSound( AudioClip audioClip, float volume, float pitch )
+	public SKSound playSound( AudioClip audioClip, float volumeScale, float pitch )
 	{
 		// Find the first SKSound not being used. if they are all in use, create a new one
 		SKSound sound = nextAvailableSound();
-		sound.playAudioClip( audioClip, volume, pitch );
+		sound.playAudioClip( audioClip, volumeScale * soundEffectVolume, pitch );
 
 		return sound;
 	}
@@ -214,7 +203,7 @@ public class SoundKit : MonoBehaviour
 	{
 		// find the first SKSound not being used. if they are all in use, create a new one
 		SKSound sound = nextAvailableSound();
-		sound.playAudioClip( audioClip, _soundEffectVolume, 1f );
+		sound.playAudioClip( audioClip, soundEffectVolume, 1f );
 		sound.setLoop( true );
 
 		return sound;
