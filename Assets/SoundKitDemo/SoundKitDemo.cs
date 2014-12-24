@@ -57,7 +57,7 @@ public class SoundKitDemo : MonoBehaviour
 			SoundKit.instance.playSound( squish );
 
 		if( GUILayout.Button( "Play Wind Background Audio" ) )
-			SoundKit.instance.playBackgroundMusic( windBGSound, true );
+			SoundKit.instance.playBackgroundMusic( windBGSound, 8, true );
 
 		if( GUILayout.Button( "Toggle AudioListener.pause" ) )
 			AudioListener.pause = !AudioListener.pause;
