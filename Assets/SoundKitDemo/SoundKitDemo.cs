@@ -57,7 +57,10 @@ public class SoundKitDemo : MonoBehaviour
 			SoundKit.instance.playSound( squish );
 
 		if( GUILayout.Button( "Play Wind Background Audio" ) )
-			SoundKit.instance.playBackgroundMusic( windBGSound, 8, true );
+			SoundKit.instance.playBackgroundMusic( windBGSound, 8f, true );
+		
+		if( GUILayout.Button( "Stop Background Audio" ) )
+			SoundKit.instance.backgroundSound.stop();
 
 		if( GUILayout.Button( "Toggle AudioListener.pause" ) )
 			AudioListener.pause = !AudioListener.pause;
@@ -66,7 +69,7 @@ public class SoundKitDemo : MonoBehaviour
 		GUILayout.Label( "Sound Effect Volume" );
 
 		var oldVolume = _volume;
-		_volume = GUILayout.HorizontalSlider( _volume, 0, 1 );
+		_volume = GUILayout.HorizontalSlider( _volume, 0f, 1f );
 		if( oldVolume != _volume )
 			SoundKit.instance.soundEffectVolume = _volume;
 
@@ -77,7 +80,7 @@ public class SoundKitDemo : MonoBehaviour
 			GUILayout.Label( "BG Music Volume" );
 
 			oldVolume = _bgMusicVolume;
-			_bgMusicVolume = GUILayout.HorizontalSlider( _bgMusicVolume, 0, 1 );
+			_bgMusicVolume = GUILayout.HorizontalSlider( _bgMusicVolume, 0f, 1f );
 			if( oldVolume != _bgMusicVolume )
 				SoundKit.instance.backgroundSound.audioSource.volume = _bgMusicVolume;
 		}

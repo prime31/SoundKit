@@ -216,6 +216,10 @@ public class SoundKit : MonoBehaviour
 	/// <param name="sound">Sound.</param>
 	public void recycleSound( SKSound sound )
 	{
+		// we dont recycle the backgroundSound since it always stays alive
+		if( sound == backgroundSound )
+			return;
+		
 		var index = 0;
 		while( index < _playingSounds.Count )
 		{
@@ -354,7 +358,7 @@ public class SoundKit : MonoBehaviour
 
 			// reset some defaults in case the AudioSource was changed
 			audioSource.loop = false;
-			audioSource.pan = 0;
+			audioSource.panStereo = 0;
 			audioSource.mute = false;
 
 			audioSource.Play();
