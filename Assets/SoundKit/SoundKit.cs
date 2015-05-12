@@ -117,7 +117,7 @@ public class SoundKit : MonoBehaviour
 		if( backgroundSound == null )
 			backgroundSound = new SKSound( this );
 
-		backgroundSound.playAudioClip( audioClip, volume, 1f );
+		backgroundSound.playAudioClip( audioClip, volume, 1f, 0f );
 		backgroundSound.setLoop( loop );
 	}
 
@@ -125,6 +125,8 @@ public class SoundKit : MonoBehaviour
 	/// <summary>
 	/// fetches any AudioSource it can find and uses the standard PlayOneShot to play. Use this if you don't require any
 	/// extra control over a clip and don't care about when it completes. It avoids the call to StartCoroutine.
+	/// nb. pan/pitch are not supported as the chosen AudioSource might be in use with another pan/pitch setting and Unity does not support setting
+	/// them natively in PlayOneShot, so updating them here can result in bad audio.
 	/// </summary>
 	/// <param name="audioClip">Audio clip.</param>
 	/// <param name="volumeScale">Volume scale.</param>
@@ -161,7 +163,7 @@ public class SoundKit : MonoBehaviour
 	/// <param name="volume">Volume.</param>
 	public SKSound playSound( AudioClip audioClip, float volume )
 	{
-		return playSound( audioClip, volume, 1f );
+		return playSound( audioClip, volume, 1f, 0f );
 	}
 	
 	
@@ -173,21 +175,34 @@ public class SoundKit : MonoBehaviour
 	/// <param name="pitch">Pitch.</param>
 	public SKSound playPitchedSound( AudioClip audioClip, float pitch )
 	{
-		return playSound( audioClip, 1f, pitch );
+		return playSound( audioClip, 1f, pitch, 0f );
+	}
+
+	/// <summary>
+	/// plays the AudioClip with the specified pan
+	/// </summary>
+	/// <returns>The sound.</returns>
+	/// <param name="audioClip">Audio clip.</param>
+	/// <param name="pan">Pan.</param>
+	public SKSound playPannedSound( AudioClip audioClip, float pan )
+	{
+		return playSound( audioClip, 1f, 1f, pan );
 	}
 
 
 	/// <summary>
-	/// plays the AudioClip with the specified volumeScale and pitch
+	/// plays the AudioClip with the specified volumeScale, pitch and pan
 	/// </summary>
 	/// <returns>The sound.</returns>
 	/// <param name="audioClip">Audio clip.</param>
 	/// <param name="volume">Volume.</param>
-	public SKSound playSound( AudioClip audioClip, float volumeScale, float pitch )
+	/// <param name="pitch">Pitch.</param>
+	/// <param name="pan">Pan.</param>
+	public SKSound playSound( AudioClip audioClip, float volumeScale, float pitch, float pan )
 	{
 		// Find the first SKSound not being used. if they are all in use, create a new one
 		SKSound sound = nextAvailableSound();
-		sound.playAudioClip( audioClip, volumeScale * soundEffectVolume, pitch );
+		sound.playAudioClip( audioClip, volumeScale * soundEffectVolume, pitch, pan );
 
 		return sound;
 	}
@@ -203,7 +218,7 @@ public class SoundKit : MonoBehaviour
 	{
 		// find the first SKSound not being used. if they are all in use, create a new one
 		SKSound sound = nextAvailableSound();
-		sound.playAudioClip( audioClip, soundEffectVolume, 1f );
+		sound.playAudioClip( audioClip, soundEffectVolume, 1f, 0f );
 		sound.setLoop( true );
 
 		return sound;
@@ -346,7 +361,7 @@ public class SoundKit : MonoBehaviour
 		}
 
 
-		internal void playAudioClip( AudioClip audioClip, float volume, float pitch )
+		internal void playAudioClip( AudioClip audioClip, float volume, float pitch, float pan )
 		{
 			_playingLoopingAudio = false;
 			_elapsedTime = 0;
@@ -355,10 +370,10 @@ public class SoundKit : MonoBehaviour
 			audioSource.clip = audioClip;
 			audioSource.volume = volume;
 			audioSource.pitch = pitch;
+			audioSource.panStereo = pan;
 
 			// reset some defaults in case the AudioSource was changed
 			audioSource.loop = false;
-			audioSource.panStereo = 0;
 			audioSource.mute = false;
 
 			audioSource.Play();
