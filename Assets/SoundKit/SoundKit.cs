@@ -15,6 +15,7 @@ public class SoundKit : MonoBehaviour
 	public bool clearAllAudioClipsOnLevelLoad = true;
 	[NonSerialized]
 	public SKSound backgroundSound;
+	private SKSound oneShotSound;
 
 	private Stack<SKSound> _availableSounds;
 	private List<SKSound> _playingSounds;
@@ -132,15 +133,10 @@ public class SoundKit : MonoBehaviour
 	/// <param name="volumeScale">Volume scale.</param>
 	public void playOneShot( AudioClip audioClip, float volumeScale = 1f )
 	{
-		// find an audio source. any will work
-		AudioSource source = null;
+		if (oneShotSound == null)
+			oneShotSound = new SKSound(this);
 
-		if( _availableSounds.Count > 0 )
-			source = _availableSounds.Peek().audioSource;
-		else
-			source = _playingSounds[0].audioSource;
-
-		source.PlayOneShot( audioClip, volumeScale * soundEffectVolume );
+		oneShotSound.audioSource.PlayOneShot( audioClip, volumeScale * soundEffectVolume );
 	}
 
 
@@ -353,7 +349,7 @@ public class SoundKit : MonoBehaviour
 			_manager.StartCoroutine
 			(
 				fadeOut( duration, () =>
-			    {
+				{
 					if( handler != null )
 						handler();
 				})
