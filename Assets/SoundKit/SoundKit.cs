@@ -15,6 +15,7 @@ public class SoundKit : MonoBehaviour
 	public bool clearAllAudioClipsOnLevelLoad = true;
 	[NonSerialized]
 	public SKSound backgroundSound;
+	private SKSound oneShotSound;
 
 	private Stack<SKSound> _availableSounds;
 	private List<SKSound> _playingSounds;
@@ -132,15 +133,10 @@ public class SoundKit : MonoBehaviour
 	/// <param name="volumeScale">Volume scale.</param>
 	public void playOneShot( AudioClip audioClip, float volumeScale = 1f )
 	{
-		// find an audio source. any will work
-		AudioSource source = null;
+		if (oneShotSound == null)
+			oneShotSound = new SKSound(this);
 
-		if( _availableSounds.Count > 0 )
-			source = _availableSounds.Peek().audioSource;
-		else
-			source = _playingSounds[0].audioSource;
-
-		source.PlayOneShot( audioClip, volumeScale * soundEffectVolume );
+		oneShotSound.audioSource.PlayOneShot( audioClip, volumeScale * soundEffectVolume );
 	}
 
 
@@ -353,7 +349,7 @@ public class SoundKit : MonoBehaviour
 			_manager.StartCoroutine
 			(
 				fadeOut( duration, () =>
-			    {
+				{
 					if( handler != null )
 						handler();
 				})
@@ -370,7 +366,11 @@ public class SoundKit : MonoBehaviour
 			audioSource.clip = audioClip;
 			audioSource.volume = volume;
 			audioSource.pitch = pitch;
+#if UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_5_0 || UNITY_5_1
+			audioSource.pan = pan; // Pan removed in version 5.2.1p2
+#else
 			audioSource.panStereo = pan;
+#endif
 
 			// reset some defaults in case the AudioSource was changed
 			audioSource.loop = false;
