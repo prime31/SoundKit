@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 
 public class SoundKit : MonoBehaviour
@@ -46,6 +47,8 @@ public class SoundKit : MonoBehaviour
 
 		for( int i = 0; i < initialCapacity; i++ )
 			_availableSounds.Push( new SKSound( this ) );
+		
+		SceneManager.activeSceneChanged += activeSceneChanged;
 	}
 
 
@@ -55,7 +58,7 @@ public class SoundKit : MonoBehaviour
 	}
 
 
-	void OnLevelWasLoaded( int level )
+	void activeSceneChanged( Scene scene1, Scene scene2 )
 	{
 		if( dontDestroyOnLoad && clearAllAudioClipsOnLevelLoad )
 		{
